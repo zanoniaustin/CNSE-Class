@@ -28,10 +28,11 @@ type DbMap map[int]ToDoItem
 //	   	 (they are lowercase).  Describe why you think this is
 //		 a good design decision.
 //
-// ANSWER: This is a good design decision because you wouldn't want the full database to be accessed outside of this package.
+// ANSWER:
 //
-//	You would want to give the user options to interact with the database, and this file then would return only the important information, like a query result.
-//	And since the pointer to ToDo would be returned then the user would have access to manipulate the DbMap directly which you would never want a user to have access to do that.
+//	 This is a good design decision because you wouldn't want the full database to be accessed outside of this package.
+//		You would want to give the user options to interact with the database, and this file then would return only the important information, like a query result.
+//		And since the pointer to ToDo would be returned then the user would have access to manipulate the DbMap directly which you would never want a user to have access to do that.
 type ToDo struct {
 	toDoMap    DbMap
 	dbFileName string

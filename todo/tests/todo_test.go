@@ -73,11 +73,15 @@ func TestAddHardCodedItem(t *testing.T) {
 	//I will get you started, uncomment the lines below to add to the DB
 	//and ensure no errors:
 	//---------------------------------------------------------------
-	//err := DB.AddItem(item)
-	//assert.NoError(t, err, "Error adding item to DB")
+	err := DB.AddItem(item)
+	assert.NoError(t, err, "Error adding item to DB")
 
 	//TODO: Now finish the test case by looking up the item in the DB
 	//and making sure it matches the item that you put in the DB above
+
+	searchedItem, err := DB.GetItem(item.Id)
+	assert.NoError(t, err, "Error getting item from DB")
+	assert.Equal(t, searchedItem, item, "Items do not match")
 }
 
 func TestAddRandomStructItem(t *testing.T) {
@@ -90,6 +94,8 @@ func TestAddRandomStructItem(t *testing.T) {
 	assert.NoError(t, err, "Created fake item OK")
 
 	//TODO: Complete the test
+	error := DB.AddItem(item)
+	assert.NoError(t, error, "Error adding item to DB")
 }
 
 func TestAddRandomItem(t *testing.T) {
@@ -104,15 +110,89 @@ func TestAddRandomItem(t *testing.T) {
 
 }
 
-// TODO: Please delete this test from your submission, it does not do anything
-// but i wanted to demonstrate how you can starting shelling out your tests
-// and then implment them later.  The go testing framework provides a
-// Skip() function that just tells the testing framework to skip or ignore
-// this test function
-func TestAddPlaceholderTest(t *testing.T) {
-	t.Skip("Placeholder test not implemented yet")
-}
-
 //TODO: Create additional tests to showcase the correct operation of your program
 //for example getting an item, getting all items, updating items, and so on. Be
 //creative here.
+
+func TestRestoreDB(t *testing.T) {
+	err := DB.RestoreDB()
+	assert.NoError(t, err, "Error restoring DB")
+}
+
+func TestDeleteItemFromDB(t *testing.T) {
+	item := db.ToDoItem{
+		Id:     999,
+		Title:  "This is a test case item",
+		IsDone: false,
+	}
+
+	err := DB.AddItem(item)
+	assert.NoError(t, err, "Error adding item to DB")
+
+	err = DB.DeleteItem(item.Id)
+	assert.NoError(t, err, "Error deleting item to DB")
+}
+
+func TestGetItem(t *testing.T) {
+	item := db.ToDoItem{
+		Id:     999,
+		Title:  "This is a test case item",
+		IsDone: false,
+	}
+
+	err := DB.AddItem(item)
+	assert.NoError(t, err, "Error adding item to DB")
+
+	searchedItem, err := DB.GetItem(item.Id)
+	assert.NoError(t, err, "Error getting item from DB")
+	assert.Equal(t, searchedItem, item)
+}
+
+func TestGetItems(t *testing.T) {
+	err := DB.RestoreDB()
+	assert.NoError(t, err, "Error restoring DB")
+
+	item1 := db.ToDoItem{
+		Id:     fake.Number(100, 110),
+		Title:  fake.JobTitle(),
+		IsDone: fake.Bool(),
+	}
+	item2 := db.ToDoItem{
+		Id:     fake.Number(100, 110),
+		Title:  fake.JobTitle(),
+		IsDone: fake.Bool(),
+	}
+
+	err = DB.AddItem(item1)
+	assert.NoError(t, err, "Error adding item from DB")
+	err = DB.AddItem(item2)
+	assert.NoError(t, err, "Error adding item from DB")
+
+	searchedItems, err := DB.GetAllItems()
+	assert.NoError(t, err, "Error getting all items from DB")
+	assert.Equal(t, len(searchedItems), 6)
+}
+
+func TestUpdateItem(t *testing.T) {
+	item := db.ToDoItem{
+		Id:     999,
+		Title:  "This is a test case item",
+		IsDone: false,
+	}
+
+	err := DB.AddItem(item)
+	assert.NoError(t, err, "Error adding item to DB")
+
+	item = db.ToDoItem{
+		Id:     999,
+		Title:  "Updated Item",
+		IsDone: false,
+	}
+
+	err = DB.UpdateItem(item)
+	assert.NoError(t, err, "Error updating item in DB")
+
+	updatedItem, err := DB.GetItem(item.Id)
+	assert.NoError(t, err, "Error getting item from DB")
+	assert.Equal(t, updatedItem.Title, item.Title)
+}

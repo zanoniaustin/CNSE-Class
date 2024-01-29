@@ -46,18 +46,29 @@ const (
 //		 flags.  The flag package is not very flexible and can lead to
 //		 some confusing code.
 
-//			 REQUIRED:     Study the code below, and make sure you understand
-//						   how it works.  Go online and readup on how the
-//						   flag package works.  Then, write a nice comment
-//				  		   block to document this function that highights that
-//						   you understand how it works.
+//				 REQUIRED:     Study the code below, and make sure you understand
+//							   how it works.  Go online and readup on how the
+//							   flag package works.  Then, write a nice comment
+//					  		   block to document this function that highights that
+//							   you understand how it works.
 //
-//			 EXTRA CREDIT: The best CLI and command line processor for
-//						   go is called Cobra.  Refactor this function to
-//						   use it.  See github.com/spf13/cobra for information
-//						   on how to use it.
+//				 EXTRA CREDIT: The best CLI and command line processor for
+//							   go is called Cobra.  Refactor this function to
+//							   use it.  See github.com/spf13/cobra for information
+//							   on how to use it.
 //
-//	 YOUR ANSWER: <GOES HERE>
+//		 YOUR ANSWER: <GOES HERE>
+//
+//	  processCmdLineFlags allows for the addition of flag options when main program is ran
+//	  Options:
+//			-db <string:fileName>: Follow up with a filename that you want the database to be called, default value ./data/todo.json
+//			-restore: Will take the backup database file, ./data/todo.json.bak, and will copy contents into database file, ./data/todo.json
+//			-l: Will list all of the items inside the database file if it exists
+//			-q <int>: Integer value is provided to search database for matching Id value, item is printed if found
+//			-a <json String>: Valid json string passed in that will be added to the database file, if unique Id is provided
+//			-u <json String>: Valid json string passed in that will update an existing item in database, if matching Id value is found
+//			-d <int>: Integer value is provided to delete item from database with matching Id values
+//			-s <bool>: Boolean value is provided to change status of item inside of database, -a <int> is also necessary for running this command
 func processCmdLineFlags() (AppOptType, error) {
 	flag.StringVar(&dbFileNameFlag, "db", "./data/todo.json", "Name of the database file")
 	flag.BoolVar(&restoreDbFlag, "restore", false, "Restore the database from the backup file")
