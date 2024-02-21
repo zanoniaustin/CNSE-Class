@@ -77,40 +77,32 @@ func (va *VotersAPI) GetVoterHistory(c *gin.Context) {
 	c.JSON(http.StatusOK, voterHistory)
 }
 
-// TODO
 func (va *VotersAPI) GetPollData(c *gin.Context) {
 
-	// idString := c.Param("id")
-	// id64, err := strconv.ParseUint(idString, 10, 32)
-	// if err != nil {
-	// 	log.Println("Error converting id to uint64: ", err)
-	// 	c.AbortWithStatus(http.StatusBadRequest)
-	// 	return
-	// }
+	idString := c.Param("id")
+	id64, err := strconv.ParseUint(idString, 10, 32)
+	if err != nil {
+		log.Println("Error converting id to uint64: ", err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
 
-	// voter, err := va.db.GetVoter(uint(id64))
-	// if err != nil {
-	// 	log.Println("Voter History not found: ", err)
-	// 	c.AbortWithStatus(http.StatusNotFound)
-	// 	return
-	// }
+	pollIdString := c.Param("pollid")
+	pollId64, err := strconv.ParseUint(pollIdString, 10, 32)
+	if err != nil {
+		log.Println("Error converting poll id to uint64: ", err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
 
-	// pollIdString := c.Param("id")
-	// pollId64, err := strconv.ParseUint(pollIdString, 10, 32)
-	// if err != nil {
-	// 	log.Println("Error converting pollId to uint64: ", err)
-	// 	c.AbortWithStatus(http.StatusBadRequest)
-	// 	return
-	// }
+	pollData, err := va.db.GetPollData(uint(id64), uint(pollId64))
+	if err != nil {
+		log.Println("Poll data not found: ", err)
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
 
-	// pollData, err := va.db.GetPollData(voter, uint(pollId64))
-	// if err != nil {
-	// 	log.Println("Poll data not found: ", err)
-	// 	c.AbortWithStatus(http.StatusNotFound)
-	// 	return
-	// }
-
-	// c.JSON(http.StatusOK, pollData)
+	c.JSON(http.StatusOK, pollData)
 }
 
 func (va *VotersAPI) AddVoter(c *gin.Context) {
@@ -131,23 +123,30 @@ func (va *VotersAPI) AddVoter(c *gin.Context) {
 	c.JSON(http.StatusOK, voter)
 }
 
-// TODO
 func (va *VotersAPI) AddPollData(c *gin.Context) {
-	var voter db.Voter
+	var voterHistory db.VoterHistory
 
-	if err := c.ShouldBindJSON(&voter); err != nil {
+	if err := c.ShouldBindJSON(&voterHistory); err != nil {
 		log.Println("Error binding JSON: ", err)
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	if err := va.db.AddVoter(voter); err != nil {
-		log.Println("Error adding voter: ", err)
+	idString := c.Param("id")
+	id64, err := strconv.ParseUint(idString, 10, 32)
+	if err != nil {
+		log.Println("Error converting id to uint64: ", err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	if err := va.db.AddVoterHistory(uint(id64), voterHistory); err != nil {
+		log.Println("Error adding voter history: ", err)
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	c.JSON(http.StatusOK, voter)
+	c.JSON(http.StatusOK, voterHistory)
 }
 
 func (va *VotersAPI) UpdateVoter(c *gin.Context) {

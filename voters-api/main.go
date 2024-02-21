@@ -34,26 +34,19 @@ var (
 //						   use it.  See github.com/spf13/cobra for information
 //						   on how to use it.
 //
-//	 YOUR ANSWER: <GOES HERE>
+//	 YOUR ANSWER: Command line flag options:
+//					-h set the IP address to listen on, default 0.0.0.0
+//					-p set the port that service will connect to, default 1080
+//				  Flags are first initially declared, then flag.Parse() is ran to
+//				  see which flags are present and if they have any arguments
 func processCmdLineFlags() {
 
-	//Note some networking lingo, some frameworks start the server on localhost
-	//this is a local-only interface and is fine for testing but its not accessible
-	//from other machines.  To make the server accessible from other machines, we
-	//need to listen on an interface, that could be an IP address, but modern
-	//cloud servers may have multiple network interfaces for scale.  With TCP/IP
-	//the address 0.0.0.0 instructs the network stack to listen on all interfaces
-	//We set this up as a flag so that we can overwrite it on the command line if
-	//needed
 	flag.StringVar(&hostFlag, "h", "0.0.0.0", "Listen on all interfaces")
 	flag.UintVar(&portFlag, "p", 1080, "Default Port")
 
 	flag.Parse()
 }
 
-// main is the entry point for our todo API application.  It processes
-// the command line flags and then uses the db package to perform the
-// requested operation
 func main() {
 	processCmdLineFlags()
 	r := gin.Default()
@@ -72,8 +65,8 @@ func main() {
 	r.DELETE("/voters/:id", apiHandler.DeleteVoter)
 	r.GET("/voters/:id", apiHandler.GetVoter)
 	r.GET("/voters/:id/polls", apiHandler.GetVoterHistory)
-	r.POST("/voters/:id/polls:pollid", apiHandler.AddPollData)
-	r.GET("/voters/:id/polls:pollid", apiHandler.GetPollData)
+	r.POST("/voters/:id/polls", apiHandler.AddPollData)
+	r.GET("/voters/:id/polls/:pollid", apiHandler.GetPollData)
 
 	r.GET("/crash", apiHandler.CrashSim)
 	r.GET("/health", apiHandler.HealthCheck)

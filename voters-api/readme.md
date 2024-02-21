@@ -1,10 +1,9 @@
-## ToDo API Demo
+## Voter API
 
 This is a demo application showing many aspects of how to use the Golang Gin
 framework to create an API.
 
-It keeps `todo` items in memory for this demo.  The makefile allows you to 
-exercise the API.  For example you can load the database, query by item,
+It keeps `voter` items in memory. For example you can load the database, query by item,
 and so on.
 
 To see everything you can do you can just run `make` and get help.  See below.  Also notice that some of the make targets take parameters.  To do this you add a key=value on the `make` command line.  For example, to get a `todo` with an id of `2`. you run `make id=2 get-by-id`
@@ -14,17 +13,17 @@ To see everything you can do you can just run `make` and get help.  See below.  
 Usage make <TARGET>
 
   Targets:
-           build                        Build the todo executable
-           run                          Run the todo program from code
-           run-bin                      Run the todo executable
+           build                        Build the voter executable
+           run                          Run the voter program from code
+           run-bin                      Run the voter executable
            load-db                      Add sample data via curl
-           get-by-id                    Get a todo by id pass id=<id> on command line
-           get-all                      Get all todos
+           get-by-id                    Get a voter by id pass id=<id> on command line
+           get-all                      Get all voters
            update-2                     Update record 2, pass a new title in using title=<title> on command line
-           delete-all                   Delete all todos
-           delete-by-id                 Delete a todo by id pass id=<id> on command line
-           get-v2                       Get all todos by done status pass done=<true|false> on command line
-           get-v2-all                   Get all todos using version 2
+           delete-all                   Delete all voters
+           delete-by-id                 Delete a voter by id pass id=<id> on command line
+           get-v2                       Get all voters by done status pass done=<true|false> on command line
+           get-v2-all                   Get all voters using version 2
 ```
 
 ### Why use the gin framework?
