@@ -1,4 +1,4 @@
-# CloudNativeSoftwareEngineeringLandscape
+# Cloud Native Software Engineering Landscape
 
 1. I found the thought of architectural design from the paper to be the most interesting. When considering what my companies needs are from Cloud services I see that there are many things I now have to take into consideration. First the type of container that best fits for our service. We have a big need for scalability with high peak usage during different times of the week so using a Kubernetes container sounds like it would be a good fit. Kubernetes will also allow for diagnosing any failures detected within our service. I need to investigate if there is a way to leverage the now Edge Computing that can be done on smart phones themselves to lessen the burden on our services, especially during peak user hours. When selecting a Cloud Service Provider I will also need to take into account the different Regions that are covered by the provider and how to best leverage the data centers location best. It will also be important to address the organizational change that might be necessary to properly to support the development and maintenance of a Cloud Native Service.
 
