@@ -3,11 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 
 	"drexel.edu/todo/api"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 // Global variables to hold the command line flags to drive the todo CLI
@@ -18,21 +20,6 @@ var (
 )
 
 // processCmdLineFlags parses the command line flags for our CLI
-//
-// TODO: This function uses the flag package to parse the command line
-//		 flags.  The flag package is not very flexible and can lead to
-//		 some confusing code.
-
-//			 REQUIRED:     Study the code below, and make sure you understand
-//						   how it works.  Go online and readup on how the
-//						   flag package works.  Then, write a nice comment
-//				  		   block to document this function that highights that
-//						   you understand how it works.
-//
-//			 EXTRA CREDIT: The best CLI and command line processor for
-//						   go is called Cobra.  Refactor this function to
-//						   use it.  See github.com/spf13/cobra for information
-//						   on how to use it.
 //
 //	 YOUR ANSWER: Command line flag options:
 //					-h set the IP address to listen on, default 0.0.0.0
@@ -49,8 +36,10 @@ func processCmdLineFlags() {
 
 func main() {
 	processCmdLineFlags()
-	r := gin.Default()
-	r.Use(cors.Default())
+
+	app := fiber.New()
+	app.Use(cors.New())
+	app.Use(recover.New())
 
 	apiHandler, err := api.New()
 	if err != nil {
@@ -58,19 +47,20 @@ func main() {
 		os.Exit(1)
 	}
 
-	r.GET("/voters", apiHandler.ListAllVoters)
-	r.POST("/voters", apiHandler.AddVoter)
-	r.PUT("/voters", apiHandler.UpdateVoter)
-	r.DELETE("/voters", apiHandler.DeleteAllVoters)
-	r.DELETE("/voters/:id", apiHandler.DeleteVoter)
-	r.GET("/voters/:id", apiHandler.GetVoter)
-	r.GET("/voters/:id/polls", apiHandler.GetVoterHistory)
-	r.POST("/voters/:id/polls", apiHandler.AddPollData)
-	r.GET("/voters/:id/polls/:pollid", apiHandler.GetPollData)
+	app.Get("/voters", apiHandler.ListAllVoters)
+	app.Post("/voters", apiHandler.AddVoter)
+	app.Put("/voters", apiHandler.UpdateVoter)
+	app.Delete("/voters", apiHandler.DeleteAllVoters)
+	app.Delete("/voters/:id", apiHandler.DeleteVoter)
+	app.Get("/voters/:id", apiHandler.GetVoter)
+	app.Get("/voters/:id/polls", apiHandler.GetVoterHistory)
+	app.Post("/voters/:id/polls", apiHandler.AddPollData)
+	app.Get("/voters/:id/polls/:pollid", apiHandler.GetPollData)
 
-	r.GET("/crash", apiHandler.CrashSim)
-	r.GET("/health", apiHandler.HealthCheck)
+	app.Get("/crash", apiHandler.CrashSim)
+	app.Get("/health", apiHandler.HealthCheck)
 
 	serverPath := fmt.Sprintf("%s:%d", hostFlag, portFlag)
-	r.Run(serverPath)
+	log.Println("Starting server on ", serverPath)
+	app.Listen(serverPath)
 }

@@ -3,10 +3,9 @@ package api
 import (
 	"log"
 	"net/http"
-	"strconv"
 
 	"drexel.edu/todo/db"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 )
 
 type VotersAPI struct {
@@ -22,182 +21,159 @@ func New() (*VotersAPI, error) {
 	return &VotersAPI{db: dbHandler}, nil
 }
 
-func (va *VotersAPI) ListAllVoters(c *gin.Context) {
+func (va *VotersAPI) ListAllVoters(c *fiber.Ctx) error {
 
 	votersList, err := va.db.GetAllVoters()
 	if err != nil {
 		log.Println("Error Getting All Voters: ", err)
-		c.AbortWithStatus(http.StatusNotFound)
-		return
+		return fiber.NewError(http.StatusNotFound,
+			"Error Getting All Items")
 	}
 
 	if votersList == nil {
 		votersList = make([]db.Voter, 0)
 	}
 
-	c.JSON(http.StatusOK, votersList)
+	return c.JSON(votersList)
 }
 
-func (va *VotersAPI) GetVoter(c *gin.Context) {
-
-	idString := c.Param("id")
-	id64, err := strconv.ParseUint(idString, 10, 32)
+func (va *VotersAPI) GetVoter(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
 	if err != nil {
-		log.Println("Error converting id to uint64: ", err)
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
+		return fiber.NewError(http.StatusBadRequest)
 	}
 
-	voter, err := va.db.GetVoter(uint(id64))
+	voter, err := va.db.GetVoter(uint(id))
 	if err != nil {
 		log.Println("Voter not found: ", err)
-		c.AbortWithStatus(http.StatusNotFound)
-		return
+		return fiber.NewError(http.StatusNotFound)
 	}
 
-	c.JSON(http.StatusOK, voter)
+	return c.JSON(voter)
 }
 
-func (va *VotersAPI) GetVoterHistory(c *gin.Context) {
-	idString := c.Param("id")
-	id64, err := strconv.ParseUint(idString, 10, 32)
+func (va *VotersAPI) GetVoterHistory(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
 	if err != nil {
-		log.Println("Error converting id to uint64: ", err)
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
+		return fiber.NewError(http.StatusBadRequest)
 	}
 
-	voterHistory, err := va.db.GetVoterHistory(uint(id64))
+	voterHistory, err := va.db.GetVoterHistory(uint(id))
 	if err != nil {
 		log.Println("Voter History not found: ", err)
-		c.AbortWithStatus(http.StatusNotFound)
-		return
+		return fiber.NewError(http.StatusNotFound)
 	}
 
-	c.JSON(http.StatusOK, voterHistory)
+	return c.JSON(voterHistory)
 }
 
-func (va *VotersAPI) GetPollData(c *gin.Context) {
-
-	idString := c.Param("id")
-	id64, err := strconv.ParseUint(idString, 10, 32)
+func (va *VotersAPI) GetPollData(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
 	if err != nil {
-		log.Println("Error converting id to uint64: ", err)
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
+		return fiber.NewError(http.StatusBadRequest)
 	}
 
-	pollIdString := c.Param("pollid")
-	pollId64, err := strconv.ParseUint(pollIdString, 10, 32)
+	pollId, err := c.ParamsInt("pollid")
 	if err != nil {
-		log.Println("Error converting poll id to uint64: ", err)
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
+		return fiber.NewError(http.StatusBadRequest)
 	}
 
-	pollData, err := va.db.GetPollData(uint(id64), uint(pollId64))
+	pollData, err := va.db.GetPollData(uint(id), uint(pollId))
 	if err != nil {
 		log.Println("Poll data not found: ", err)
-		c.AbortWithStatus(http.StatusNotFound)
-		return
+		return fiber.NewError(http.StatusNotFound)
 	}
 
-	c.JSON(http.StatusOK, pollData)
+	return c.JSON(pollData)
 }
 
-func (va *VotersAPI) AddVoter(c *gin.Context) {
+func (va *VotersAPI) AddVoter(c *fiber.Ctx) error {
 	var voter db.Voter
 
-	if err := c.ShouldBindJSON(&voter); err != nil {
+	if err := c.BodyParser(&voter); err != nil {
 		log.Println("Error binding JSON: ", err)
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
+		return fiber.NewError(http.StatusBadRequest)
 	}
 
-	if err := va.db.AddVoter(voter); err != nil {
+	if err := va.db.AddVoter(&voter); err != nil {
 		log.Println("Error adding voter: ", err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
+		return fiber.NewError(http.StatusInternalServerError)
 	}
 
-	c.JSON(http.StatusOK, voter)
+	return c.JSON(voter)
 }
 
-func (va *VotersAPI) AddPollData(c *gin.Context) {
+func (va *VotersAPI) AddPollData(c *fiber.Ctx) error {
 	var voterHistory db.VoterHistory
 
-	if err := c.ShouldBindJSON(&voterHistory); err != nil {
+	if err := c.BodyParser(&voterHistory); err != nil {
 		log.Println("Error binding JSON: ", err)
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
+		return fiber.NewError(http.StatusBadRequest)
 	}
 
-	idString := c.Param("id")
-	id64, err := strconv.ParseUint(idString, 10, 32)
+	id, err := c.ParamsInt("id")
 	if err != nil {
-		log.Println("Error converting id to uint64: ", err)
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
+		return fiber.NewError(http.StatusBadRequest)
 	}
 
-	if err := va.db.AddVoterHistory(uint(id64), voterHistory); err != nil {
+	if err := va.db.AddVoterHistory(uint(id), voterHistory); err != nil {
 		log.Println("Error adding voter history: ", err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
+		return fiber.NewError(http.StatusInternalServerError)
 	}
 
-	c.JSON(http.StatusOK, voterHistory)
+	return c.JSON(voterHistory)
 }
 
-func (va *VotersAPI) UpdateVoter(c *gin.Context) {
+func (va *VotersAPI) UpdateVoter(c *fiber.Ctx) error {
 	var voter db.Voter
-	if err := c.ShouldBindJSON(&voter); err != nil {
+
+	if err := c.BodyParser(&voter); err != nil {
 		log.Println("Error binding JSON: ", err)
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
+		return fiber.NewError(http.StatusBadRequest)
 	}
 
-	if err := va.db.UpdateVoter(voter); err != nil {
+	if err := va.db.UpdateVoter(&voter); err != nil {
 		log.Println("Error updating voter: ", err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
+		return fiber.NewError(http.StatusInternalServerError)
 	}
 
-	c.JSON(http.StatusOK, voter)
+	return c.JSON(voter)
 }
 
-func (va *VotersAPI) DeleteVoter(c *gin.Context) {
-	idString := c.Param("id")
-	id64, _ := strconv.ParseUint(idString, 10, 32)
+func (va *VotersAPI) DeleteVoter(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return fiber.NewError(http.StatusBadRequest)
+	}
 
-	if err := va.db.DeleteVoter(uint(id64)); err != nil {
+	if err := va.db.DeleteVoter(uint(id)); err != nil {
 		log.Println("Error deleting voter: ", err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
+		return fiber.NewError(http.StatusInternalServerError)
 	}
 
-	c.Status(http.StatusOK)
+	return c.Status(http.StatusOK).SendString("Delete OK")
 }
 
-func (va *VotersAPI) DeleteAllVoters(c *gin.Context) {
+func (va *VotersAPI) DeleteAllVoters(c *fiber.Ctx) error {
 
-	if err := va.db.DeleteAll(); err != nil {
+	if cnt, err := va.db.DeleteAll(); err != nil {
 		log.Println("Error deleting all voters: ", err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
+		return fiber.NewError(http.StatusInternalServerError)
+	} else {
+		log.Println("Deleted ", cnt, " items")
 	}
 
-	c.Status(http.StatusOK)
+	return c.Status(http.StatusOK).SendString("Delete All OK")
 }
 
-func (va *VotersAPI) CrashSim(c *gin.Context) {
+func (va *VotersAPI) CrashSim(c *fiber.Ctx) error {
 	//panic() is go's version of throwing an exception
 	panic("Simulating an unexpected crash")
 }
 
-func (va *VotersAPI) HealthCheck(c *gin.Context) {
-	c.JSON(http.StatusOK,
-		gin.H{
+func (va *VotersAPI) HealthCheck(c *fiber.Ctx) error {
+	return c.Status(http.StatusOK).
+		JSON(fiber.Map{
 			"status":             "ok",
 			"version":            "1.0.0",
 			"uptime":             100,
