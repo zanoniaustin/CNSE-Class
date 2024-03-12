@@ -23,3 +23,4 @@ https://en.wikipedia.org/wiki/HATEOAS <br />
 https://en.wikipedia.org/wiki/REST <br />
 https://restfulapi.net/hateoas/ <br />
 https://en.wikipedia.org/wiki/Richardson_Maturity_Model <br />
+https://www.infoq.com/articles/webber-rest-workflow/ <br />
