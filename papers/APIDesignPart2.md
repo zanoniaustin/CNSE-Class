@@ -8,3 +8,4 @@ https://en.wikipedia.org/wiki/Hypermedia <br />
 https://en.wikipedia.org/wiki/HATEOAS <br />
 https://en.wikipedia.org/wiki/REST <br />
 https://restfulapi.net/hateoas/ <br />
+https://en.wikipedia.org/wiki/Richardson_Maturity_Model <br />
