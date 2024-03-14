@@ -1,5 +1,5 @@
 
-'''
+```
 {
     "departmentId": 10,
     "departmentName": "Administration",
@@ -13,7 +13,7 @@
         }
     ]
 }
-'''
+```
 
 
 
