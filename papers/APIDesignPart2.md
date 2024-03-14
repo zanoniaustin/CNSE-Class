@@ -6,7 +6,7 @@ type voterPoll struct {
 	VoteDate  time.Time
 	"links": [
 	     {
-		"href": "/polls/{PollId}",
+		"href": "/poll/{PollId}",
 		"rel": "Poll",
 		"type" : "GET"
 	     }
@@ -34,7 +34,7 @@ type Vote struct {
 		"type" : "GET"
              },
              {
-		"href": "/polls/{PollId}",
+		"href": "/poll/{PollId}",
 		"rel": "Poll",
 		"type" : "GET"
              }
