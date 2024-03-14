@@ -1,5 +1,5 @@
 
-For example, the given below JSON response may be from an API like HTTP GET http://api.domain.com/management/departments/10
+'''
 {
     "departmentId": 10,
     "departmentName": "Administration",
@@ -13,6 +13,7 @@ For example, the given below JSON response may be from an API like HTTP GET http
         }
     ]
 }
+'''
 
 
 
