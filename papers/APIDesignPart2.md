@@ -6,8 +6,8 @@ type voterPoll struct {
 	VoteDate  time.Time
 	"links": [
 	     {
-		"href": "10/employees",
-		"rel": "employees",
+		"href": "/polls/{PollId}",
+		"rel": "Poll",
 		"type" : "GET"
 	     }
 	]
@@ -29,13 +29,13 @@ type Vote struct {
 	VoteValue uint
 	"links": [
              {
-		"href": "10/employees",
-		"rel": "employees",
+		"href": "/voter/{VoterId}",
+		"rel": "Voter",
 		"type" : "GET"
              },
              {
-		"href": "10/employees",
-		"rel": "employees",
+		"href": "/polls/{PollId}",
+		"rel": "Poll",
 		"type" : "GET"
              }
     ]
